@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_booking_operations" inherit_id="web.assets_backend" name="Qimam Booking Operations">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/booking_operations.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/booking_operations.scss"/>
+ </xpath>
+</template>
+<record id="action_booking_operations" model="ir.actions.client"><field name="name">تشغيل اليوم</field><field name="tag">qimam_operations</field></record>
+</odoo>

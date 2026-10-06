@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_payment_experience" inherit_id="web.assets_backend" name="Qimam Payment Experience">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/payment_experience.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/payment_experience.scss"/>
+ </xpath>
+</template>
+<record id="action_payment_experience" model="ir.actions.client"><field name="name">الدفع والتأكيد</field><field name="tag">qimam_payment_experience</field></record>
+</odoo>

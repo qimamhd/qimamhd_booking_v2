@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamHallPlanner"><div class="o_qimam_planner">
+<div class="o_qimam_planner_top"><div><h2>تقويم القاعات</h2><span>ميلادي وهجري — اضغط على اليوم لرؤية القاعات والفترات</span></div>
+<div class="o_qimam_nav"><button class="btn btn-light o_qimam_prev">‹</button><button class="btn btn-primary o_qimam_today">اليوم</button><button class="btn btn-light o_qimam_next">›</button></div></div>
+<div class="o_qimam_planner_body"/></div></t>
+
+<t t-name="QimamHallMonth"><div>
+<div class="o_qimam_month_title"><strong><t t-esc="data.year"/> / <t t-esc="data.month"/></strong><span><t t-esc="data.hall_count"/> قاعات · <t t-esc="data.period_count"/> فترات يومية</span></div>
+<div class="o_qimam_month_grid">
+<t t-foreach="data.days" t-as="d"><div t-attf-class="o_qimam_day #{d.free_slots == 0 ? 'is_full' : (d.used_slots ? 'is_busy' : 'is_free')}" t-att-data-date="d.date">
+<div class="o_qimam_day_head"><strong t-esc="d.day"/><small t-esc="d.hijri"/></div>
+<div class="o_qimam_day_status"><t t-if="d.capacity == 0"><span>لا توجد فترات مهيأة</span></t><t t-elif="d.used_slots == 0"><span class="o_qimam_good">متاح بالكامل</span></t><t t-elif="d.free_slots == 0"><span class="o_qimam_full">مكتمل</span></t><t t-else=""><span><t t-esc="d.free_slots"/> متاح</span></t></div>
+<div class="o_qimam_day_meta" t-if="d.bookings"><span><t t-esc="d.bookings"/> حجوزات</span><span t-if="d.holds"> · <t t-esc="d.holds"/> انتظار</span></div>
+</div></t></div></div></t>
+
+<t t-name="QimamHotelPlanner"><div class="o_qimam_planner">
+<div class="o_qimam_planner_top"><div><h2>مخطط الغرف</h2><span>الغرف × الأيام — اضغط الفراغ لإنشاء إقامة واضغط الحجز لفتحه</span></div>
+<div class="o_qimam_nav"><button class="btn btn-light o_qimam_prev">‹ أسبوع</button><button class="btn btn-primary o_qimam_today">اليوم</button><button class="btn btn-light o_qimam_next">أسبوع ›</button></div></div>
+<div class="o_qimam_planner_body"/></div></t>
+
+<t t-name="QimamHotelTimeline"><div class="o_qimam_timeline_wrap"><table class="o_qimam_timeline">
+<thead><tr><th class="o_qimam_room_name">الغرفة</th><t t-foreach="data.columns" t-as="c"><th><strong t-esc="c.day"/><small t-esc="c.weekday"/><em t-esc="c.hijri"/></th></t></tr></thead>
+<tbody><t t-foreach="data.rows" t-as="r"><tr><td class="o_qimam_room_name"><strong t-esc="r.name"/><small><t t-esc="r.type"/><t t-if="r.floor"> · <t t-esc="r.floor"/></t></small></td>
+<t t-foreach="r.cells" t-as="c"><td t-attf-class="o_qimam_room_cell #{c.stay_id ? 'has_stay' : 'state_available'}" t-att-data-resource="r.resource_id" t-att-data-date="c.date" t-att-data-stay="c.stay_id || ''"><span t-if="!c.stay_id" class="o_qimam_plus">＋</span></td></t></tr>
+<tr class="o_qimam_bar_row"><td class="o_qimam_room_name o_qimam_bar_stub"></td><td t-att-colspan="data.days" class="o_qimam_bar_canvas"><t t-foreach="data.spans" t-as="s"><button t-if="s.resource_id == r.resource_id" t-attf-class="o_qimam_stay_bar state_#{s.state}" t-att-style="'right:'+((s.offset/data.days)*100)+'%;width:'+((s.length/data.days)*100)+'%;'" t-att-data-stay="s.id"><strong t-esc="s.guest"/><small><t t-esc="s.checkin"/> ← <t t-esc="s.checkout"/></small></button></t></td></tr></t></tbody>
+</table><div t-if="!data.rows.length" class="o_qimam_empty">أضف الغرف أولًا من الإعدادات، وسيظهر المخطط هنا تلقائيًا.</div></div></t>
+</templates>

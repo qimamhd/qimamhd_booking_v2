@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamBookingStudio"><div class="qs_host"/></t>
+<t t-name="QimamBookingStudioBody">
+<div class="qs_page" dir="rtl">
+ <header class="qs_header"><div><span class="qs_kicker">GUIDED BOOKING STUDIO</span><h1>حجز جديد</h1><p>رحلة قصيرة، والقرار واضح في كل خطوة.</p></div>
+  <div class="qs_modebar" t-if="d.business_mode == 'mixed'"><button t-attf-class="qs_mode #{mode == 'events' ? 'active' : ''}" data-mode="events">مناسبة</button><button t-attf-class="qs_mode #{mode == 'hotel' ? 'active' : ''}" data-mode="hotel">إقامة</button></div>
+ </header>
+ <div class="qs_progress" t-if="step &lt; 6"><i t-attf-class="#{step >= 1 ? 'on' : ''}"/><i t-attf-class="#{step >= 2 ? 'on' : ''}"/><i t-attf-class="#{step >= 3 ? 'on' : ''}"/><i t-attf-class="#{step >= 4 ? 'on' : ''}"/></div>
+
+ <main class="qs_stage">
+  <t t-if="step == 1">
+   <div class="qs_title"><span>01</span><h2>من هو ضيفنا؟</h2><p>ابحث بالاسم أو رقم الجوال، أو اختر من العملاء الأخيرين.</p></div>
+   <input class="qs_customer_search qs_search" placeholder="ابحث عن العميل…"/>
+   <div class="qs_cards qs_customers"><t t-foreach="d.customers" t-as="c"><button t-attf-class="qs_customer #{p.partner_id == c.id ? 'selected' : ''}" t-att-data-id="c.id" t-att-data-name="c.name"><span class="qs_avatar" t-esc="c.name.substring(0,1)"/><div><strong t-esc="c.name"/><small t-esc="c.phone || 'بدون رقم'"/></div><b>✓</b></button></t></div>
+   <div class="qs_footer"><span/><button class="qs_continue">التالي ←</button></div>
+  </t>
+
+  <t t-if="step == 2 and mode == 'events'">
+   <div class="qs_title"><span>02</span><h2>متى وأين المناسبة؟</h2><p>اختر اليوم والقاعة والفترة. النظام سيتحقق قبل أن يسمح بالمتابعة.</p></div>
+   <div class="qs_event_grid"><label>التاريخ<input class="qs_date" type="date"/></label><label>القاعة<select class="qs_hall"><option value="">اختر القاعة</option><t t-foreach="d.halls" t-as="h"><option t-att-value="h.id"><t t-esc="h.name"/> — <t t-esc="h.capacity"/> شخص</option></t></select></label></div>
+   <div class="qs_label">الفترات</div><div class="qs_periods"><t t-foreach="d.periods" t-as="x"><button class="qs_period" t-att-data-id="x.id"><span>◷</span><strong t-esc="x.name"/></button></t></div>
+   <div class="qs_footer"><button class="qs_back">رجوع</button><button class="qs_event_quote">تحقق ومتابعة ←</button></div>
+  </t>
+
+  <t t-if="step == 2 and mode == 'hotel'">
+   <div class="qs_title"><span>02</span><h2>ما مدة الإقامة؟</h2><p>نبحث في التوفر الحقيقي، ثم نعرض فقط الخيارات المناسبة.</p></div>
+   <div class="qs_stay_fields"><label>الوصول<input class="qs_ci" type="date"/></label><label>المغادرة<input class="qs_co" type="date"/></label><label>البالغون<input class="qs_adults" type="number" min="1" value="1"/></label><label>الأطفال<input class="qs_children" type="number" min="0" value="0"/></label></div>
+   <div class="qs_footer"><button class="qs_back">رجوع</button><button class="qs_stay_quote">عرض المتاح ←</button></div>
+  </t>
+
+  <t t-if="step == 3 and mode == 'hotel'">
+   <div class="qs_title"><span>03</span><h2>هذه الخيارات تناسب الطلب.</h2><p><t t-esc="p.stay_quote.nights"/> ليالٍ — لا نعرض غرفة متعارضة مع حجز قائم.</p></div>
+   <div class="qs_rooms"><t t-foreach="p.stay_quote.options" t-as="r"><button class="qs_room" t-att-data-id="r.id" t-att-data-name="r.name" t-att-data-total="r.total"><div><span class="qs_room_icon">▰</span><strong t-esc="r.name"/><small><t t-esc="r.type"/> · حتى <t t-esc="r.capacity"/> ضيوف</small></div><div class="qs_room_price"><strong><t t-esc="r.total"/> <t t-esc="r.currency"/></strong><small>الإقامة كاملة</small></div></button></t><div class="qs_no_rooms" t-if="!p.stay_quote.options.length">لا توجد غرفة مطابقة. ارجع وعدّل المدة أو عدد الضيوف.</div></div>
+   <div class="qs_footer"><button class="qs_back">تعديل البحث</button><span/></div>
+  </t>
+
+  <t t-if="step == 4">
+   <div class="qs_title"><span>04</span><h2>راجعها بنظرة واحدة.</h2><p>لن ننشئ شيئًا حتى تضغط التأكيد.</p></div>
+   <div class="qs_review">
+    <div class="qs_review_hero"><span t-esc="mode == 'events' ? 'مناسبة' : 'إقامة'"/><h3 t-esc="p.partner_name"/><small>جاهز لإنشاء الحجز</small></div>
+    <div class="qs_review_rows">
+     <div><span>المكان</span><strong t-esc="mode == 'events' ? p.hall_name : p.resource_name"/></div>
+     <div><span>التاريخ</span><strong><t t-if="mode == 'events'" t-esc="p.booking_date"/><t t-if="mode == 'hotel'"><t t-esc="p.checkin_date"/> ← <t t-esc="p.checkout_date"/></t></strong></div>
+     <div t-if="mode == 'events'"><span>السعر الأساسي</span><strong><t t-esc="p.quote.base"/> <t t-esc="p.quote.currency"/></strong></div>
+     <div t-if="mode == 'hotel'"><span>الإقامة</span><strong><t t-esc="p.total"/> <t t-esc="d.currency"/></strong></div>
+    </div>
+    <div class="qs_safe">✓ التوفر سيُفحص مرة أخرى داخل الخادم لحظة الإنشاء.</div>
+   </div>
+   <div class="qs_footer"><button class="qs_back">تعديل</button><div><button class="qs_create secondary" data-hold="1">حفظ مؤقت</button><button class="qs_create" data-hold="0">إنشاء الحجز</button></div></div>
+  </t>
+
+  <t t-if="step == 5 and mode == 'events'">
+   <div class="qc_layout">
+    <section class="qc_catalog">
+     <div class="qs_title"><span>05</span><h2>صمّم التجربة.</h2><p>أضف ما يحتاجه العميل فقط. السعر الرسمي يأتي من الخادم.</p></div>
+     <div class="qc_packages" t-if="catalog.packages.length"><div class="qc_section_title">باقات جاهزة</div><div class="qc_package_grid"><t t-foreach="catalog.packages" t-as="pkg"><button class="qs_apply_package" t-att-data-id="pkg.id"><strong t-esc="pkg.name"/><small t-esc="pkg.description || 'اختيار سريع للخدمات'"/><span>استخدام الباقة ←</span></button></t></div></div>
+     <div class="qc_section_title">إضافات وخدمات</div><div class="qc_services"><t t-foreach="catalog.services" t-as="s"><div class="qc_service"><div><strong t-esc="s.name"/><small><t t-esc="s.price"/> <t t-esc="s.currency"/></small></div><button class="qs_add_service" t-att-data-id="s.id">＋</button></div></t></div>
+     <div class="qc_selected" t-if="commercial.items.length"><div class="qc_section_title">المحدد</div><t t-foreach="commercial.items" t-as="it"><div class="qc_chip"><span>خدمة #<t t-esc="it.id"/> × <t t-esc="it.qty"/></span><button class="qs_remove_service" t-att-data-id="it.id">×</button></div></t></div>
+    </section>
+    <aside class="qc_summary">
+     <span class="qs_kicker">LIVE CONTRACT SUMMARY</span><h3>ملخص العقد</h3>
+     <t t-if="commercial.quote"><div class="qc_money"><div><span>الأساسي + الخدمات</span><strong><t t-esc="commercial.quote.raw"/> <t t-esc="commercial.quote.currency"/></strong></div><div><span>الخصم</span><strong>- <t t-esc="commercial.quote.discount_amount"/> <t t-esc="commercial.quote.currency"/></strong></div><div><span>قبل الضريبة</span><strong><t t-esc="commercial.quote.untaxed"/> <t t-esc="commercial.quote.currency"/></strong></div><div><span>الضريبة</span><strong><t t-esc="commercial.quote.tax"/> <t t-esc="commercial.quote.currency"/></strong></div><div class="total"><span>الإجمالي</span><strong><t t-esc="commercial.quote.total"/> <t t-esc="commercial.quote.currency"/></strong></div></div></t>
+     <div class="qc_discount"><label>نوع الخصم<select class="qs_discount_type"><option value="none">بدون خصم</option><option value="percent">نسبة %</option><option value="amount">مبلغ</option></select></label><label>القيمة<input class="qs_discount_value" type="number" min="0" value="0"/></label><button class="qs_requote">تحديث السعر</button></div>
+     <div class="qc_truth">السعر والضريبة محسوبان من Odoo Tax Engine، وليس من JavaScript.</div>
+     <button class="qs_finish_commercial qc_finish">اعتماد التجهيز ←</button>
+    </aside>
+   </div>
+  </t>
+
+ <t t-if="step == 6">
+   <div class="qs_success"><div class="qs_success_mark">✓</div><span>تم إنشاء الحجز</span><h2 t-esc="done.name"/><p>تم حفظه بنجاح، ويمكنك فتح التفاصيل أو بدء حجز جديد.</p><div><button class="qs_payment_next" t-if="mode == 'events'">الدفع والتأكيد</button><button class="qs_done_open">فتح الحجز</button><button class="qs_restart">حجز جديد</button></div></div>
+  </t>
+ </main>
+</div>
+</t>
+</templates>

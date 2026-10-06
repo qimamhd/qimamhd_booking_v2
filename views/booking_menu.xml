@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <menuitem id="menu_qimam_booking_root" name="الحجوزات" sequence="10" groups="qimamhd_booking_v2.group_booking_user"/>
+ <menuitem id="menu_qimam_booking_dashboard" name="مركز الحجوزات" parent="menu_qimam_booking_root" action="action_booking_dashboard" sequence="1"/>
+ <menuitem id="menu_qimam_booking_availability" name="توفر القاعات" parent="menu_qimam_booking_root" action="action_booking_availability" sequence="2"/>
+ <menuitem id="menu_qimam_booking_quick" name="حجز سريع" parent="menu_qimam_booking_root" action="action_booking_quick_wizard" sequence="1"/>
+ <menuitem id="menu_qimam_booking" name="كل الحجوزات" parent="menu_qimam_booking_root" action="action_qimam_booking" sequence="10"/>
+ <menuitem id="menu_qimam_booking_config" name="التهيئة" parent="menu_qimam_booking_root" sequence="90" groups="qimamhd_booking_v2.group_booking_manager"/>
+ <menuitem id="menu_qimam_hall" name="القاعات" parent="menu_qimam_booking_config" action="action_qimam_hall" sequence="10"/>
+ <menuitem id="menu_qimam_period" name="فترات الحجز" parent="menu_qimam_booking_config" action="action_qimam_period" sequence="20"/>
+ <menuitem id="menu_qimam_service" name="الخدمات" parent="menu_qimam_booking_config" action="action_qimam_service" sequence="30"/>
+ <menuitem id="menu_qimam_package" name="الباقات" parent="menu_qimam_booking_config" action="action_qimam_package" sequence="40"/>
+<menuitem id="menu_stay_booking" name="الغرف والإقامات" parent="menu_qimam_booking_root" action="action_stay_booking" sequence="20"/>
+<menuitem id="menu_booking_resources" name="الموارد" parent="menu_qimam_booking_configuration" action="action_booking_resource" sequence="30"/>
+<menuitem id="menu_booking_resource_types" name="أنواع الموارد" parent="menu_qimam_booking_configuration" action="action_booking_resource_type" sequence="31"/>
+<menuitem id="menu_hall_visual_planner" name="تقويم القاعات" parent="menu_qimam_booking_root" action="action_hall_visual_planner" sequence="4"/>
+<menuitem id="menu_hotel_visual_planner" name="مخطط الغرف" parent="menu_qimam_booking_root" action="action_hotel_visual_planner" sequence="5"/>
+<menuitem id="menu_booking_os" name="مركز التشغيل" parent="menu_qimam_booking_root" action="action_booking_os" sequence="0"/>
+<menuitem id="menu_booking_operations" name="تشغيل اليوم" parent="menu_qimam_booking_root" action="action_booking_operations" sequence="1"/>
+<menuitem id="menu_booking_studio" name="＋ حجز جديد" parent="menu_qimam_booking_root" action="action_booking_studio" sequence="2"/>
+<menuitem id="menu_operation_templates" name="قوالب الجاهزية" parent="menu_qimam_booking_config" action="action_operation_templates" sequence="45"/>
+</odoo>

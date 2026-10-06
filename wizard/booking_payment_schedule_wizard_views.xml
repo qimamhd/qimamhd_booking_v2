@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_booking_payment_schedule_wizard" model="ir.ui.view">
+  <field name="name">qimam.booking.payment.schedule.wizard.form</field>
+  <field name="model">qimam.booking.payment.schedule.wizard</field>
+  <field name="arch" type="xml">
+   <form string="جدولة الدفعات">
+    <group><field name="booking_id"/><field name="preview_total"/></group>
+    <group>
+     <field name="schedule_type"/>
+     <field name="deposit_percent" attrs="{'invisible':[('schedule_type','!=','deposit_balance')]}"/>
+     <field name="installment_count" attrs="{'invisible':[('schedule_type','!=','equal')]}"/>
+     <field name="first_due_date"/>
+     <field name="interval_months" attrs="{'invisible':[('schedule_type','!=','equal')]}"/>
+    </group>
+    <div class="alert alert-info" role="alert">الجدول تشغيلي للاستحقاقات؛ حالة السداد الفعلية تُقرأ من محاسبة Odoo.</div>
+    <footer><button name="action_generate" type="object" string="إنشاء الجدول" class="btn-primary"/><button string="رجوع" special="cancel" class="btn-secondary"/></footer>
+   </form>
+  </field>
+ </record>
+</odoo>

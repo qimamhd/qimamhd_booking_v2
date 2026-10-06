@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_qimam_service_tree" model="ir.ui.view">
+  <field name="name">qimam.booking.service.tree</field><field name="model">qimam.booking.service</field>
+  <field name="arch" type="xml"><tree editable="bottom">
+   <field name="name"/><field name="price"/><field name="tax_ids" widget="many2many_tags"/><field name="product_id"/><field name="active"/>
+  </tree></field>
+ </record>
+ <record id="action_qimam_service" model="ir.actions.act_window">
+  <field name="name">الخدمات</field><field name="res_model">qimam.booking.service</field><field name="view_mode">tree,form</field>
+ </record>
+</odoo>

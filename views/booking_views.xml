@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_qimam_booking_tree" model="ir.ui.view">
+  <field name="name">qimam.booking.tree</field><field name="model">qimam.booking</field>
+  <field name="arch" type="xml"><tree decoration-muted="state == 'cancelled'" decoration-success="state == 'confirmed'">
+   <field name="name"/><field name="booking_date"/><field name="partner_id"/><field name="hall_id"/>
+   <field name="period_ids" widget="many2many_tags"/><field name="amount_total" sum="الإجمالي"/><field name="state"/>
+  </tree></field>
+ </record>
+
+ <record id="view_qimam_booking_form" model="ir.ui.view">
+  <field name="name">qimam.booking.form</field><field name="model">qimam.booking</field>
+  <field name="arch" type="xml">
+   <form string="الحجز">
+    <header>
+                    <button name="action_payment_experience" type="object" string="الدفع والتأكيد" class="oe_highlight"/>
+                    <button name="action_mission_control" type="object" string="جاهزية المناسبة"/>
+     <button name="action_hold" type="object" string="حجز مؤقت" class="oe_highlight" states="draft"/>
+     <button name="action_confirm" type="object" string="تأكيد الحجز" class="oe_highlight" states="draft,hold"/>
+     <button name="action_prepare" type="object" string="بدء التجهيز" states="confirmed"/>
+     <button name="action_start_event" type="object" string="بدء المناسبة" states="preparing"/>
+     <button name="action_complete" type="object" string="إكمال" states="event"/>
+     <button name="action_create_invoice" type="object" string="إنشاء فاتورة" states="confirmed,preparing,event,completed"/>
+     <button name="action_open_cancel_wizard" type="object" string="إلغاء" states="draft,hold,confirmed,preparing" groups="qimamhd_booking_v2.group_booking_supervisor"/>
+     <button name="action_reopen_cancelled" type="object" string="إعادة فتح" states="cancelled" groups="qimamhd_booking_v2.group_booking_supervisor"/>
+     <field name="state" widget="statusbar" statusbar_visible="draft,hold,confirmed,preparing,event,completed"/>
+    </header>
+    <sheet>
+     <div class="oe_button_box" name="button_box">
+      <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-file-text-o">
+       <field name="invoice_count" widget="statinfo" string="الفواتير"/>
+      </button>
+      <button name="action_view_payment_schedule" type="object" class="oe_stat_button" icon="fa-calendar">
+       <field name="payment_schedule_count" widget="statinfo" string="الاستحقاقات"/>
+      </button>
+     </div>
+     <div class="oe_title">
+      <label for="name" string="رقم العقد"/><h1><field name="name"/></h1><div class="text-muted"><field name="attention_message" readonly="1" nolabel="1"/></div>
+     </div>
+
+     <!-- Keep the first screen intentionally light: customer + date + hall + periods. -->
+     <group>
+      <group string="الحجز">
+       <field name="partner_id" options="{'no_quick_create': True}"/>
+       <field name="booking_date"/>
+       <field name="hall_id"/>
+       <field name="hall_price_unit"/>
+      </group>
+      <group string="المناسبة">
+       <field name="guest_count"/>
+       <field name="package_id"/>
+       <field name="hold_until" attrs="{'invisible':[('state','!=','hold')]}" readonly="1"/>
+      </group>
+     </group>
+
+     <group string="الفترات">
+      <field name="period_line_ids" nolabel="1">
+       <tree editable="bottom"><field name="period_id"/></tree>
+      </field>
+     </group>
+
+     <div class="alert alert-warning" role="alert" attrs="{'invisible':[('overdue_amount','&lt;=',0)]}">
+      يوجد مبلغ متأخر حسب جدول الاستحقاقات. راجع الاستحقاقات قبل متابعة الإجراءات المالية.
+     </div>
+     <group string="الملخص المالي" col="4">
+      <field name="amount_total" readonly="1" class="oe_inline"/>
+      <field name="financial_status" readonly="1"/>
+      <field name="amount_paid" readonly="1"/>
+      <field name="amount_due" readonly="1"/>
+      <field name="next_due_date" readonly="1"/>
+      <field name="overdue_amount" readonly="1"/>
+     </group>
+     <group>
+      <button name="action_open_payment_schedule_wizard" type="object" string="جدولة الدفعات" class="oe_link" groups="qimamhd_booking_v2.group_booking_supervisor"/>
+      <button name="action_open_financial_reversal_wizard" type="object" string="عكس / إشعار دائن" class="oe_link" groups="account.group_account_invoice"/>
+     </group>
+
+     <notebook>
+      <page string="الخدمات">
+       <field name="service_line_ids">
+        <tree editable="bottom">
+         <field name="service_id"/><field name="quantity"/><field name="price_unit"/>
+         <field name="tax_ids" widget="many2many_tags"/>
+        </tree>
+       </field>
+      </page>
+      <page string="الخصم" groups="qimamhd_booking_v2.group_booking_supervisor">
+       <group><field name="discount_type"/><field name="discount_value" attrs="{'invisible':[('discount_type','=','none')]}"/></group>
+      </page>
+      <page string="معلومات إضافية">
+       <group>
+        <field name="optional_time_from" widget="float_time"/>
+        <field name="optional_time_to" widget="float_time"/>
+       </group>
+       <field name="note" placeholder="ملاحظات داخلية مختصرة..."/>
+      </page>
+      <page string="الإلغاء" attrs="{'invisible':[('state','!=','cancelled')]}">
+       <group><field name="cancellation_reason"/><field name="cancelled_by"/><field name="cancelled_at"/></group>
+      </page>
+     </notebook>
+    </sheet>
+    <div class="oe_chatter"><field name="message_follower_ids" widget="mail_followers"/><field name="activity_ids" widget="mail_activity"/><field name="message_ids" widget="mail_thread"/></div>
+   </form>
+  </field>
+ </record>
+
+ <record id="view_qimam_booking_search" model="ir.ui.view">
+  <field name="name">qimam.booking.search</field><field name="model">qimam.booking</field>
+  <field name="arch" type="xml"><search>
+   <field name="name"/><field name="partner_id"/><field name="hall_id"/><field name="booking_date"/>
+   <filter string="اليوم" name="today" domain="[('booking_date','=',context_today())]"/>
+   <filter string="مؤكد" name="confirmed" domain="[('state','=','confirmed')]"/>
+   <filter string="حجز مؤقت" name="hold" domain="[('state','=','hold')]"/>
+   <group expand="0" string="تجميع"><filter string="القاعة" context="{'group_by':'hall_id'}"/><filter string="التاريخ" context="{'group_by':'booking_date'}"/></group>
+  </search></field>
+ </record>
+
+ <record id="action_qimam_booking" model="ir.actions.act_window">
+  <field name="name">الحجوزات</field><field name="res_model">qimam.booking</field><field name="view_mode">tree,form</field>
+  <field name="search_view_id" ref="view_qimam_booking_search"/>
+ </record>
+</odoo>

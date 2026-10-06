@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_booking_security_audit_tree" model="ir.ui.view"><field name="name">qimam.booking.security.audit.tree</field><field name="model">qimam.booking.security.audit</field><field name="arch" type="xml"><tree create="0" edit="0" delete="0"><field name="happened_at"/><field name="user_id"/><field name="model_name"/><field name="record_name"/><field name="action"/><field name="changed_fields"/><field name="reason"/></tree></field></record>
+ <record id="view_booking_security_audit_form" model="ir.ui.view"><field name="name">qimam.booking.security.audit.form</field><field name="model">qimam.booking.security.audit</field><field name="arch" type="xml"><form create="0" edit="0" delete="0"><sheet><group><group><field name="happened_at"/><field name="user_id"/><field name="company_id"/><field name="action"/></group><group><field name="model_name"/><field name="res_id"/><field name="record_name"/><field name="changed_fields"/></group></group><group><field name="old_values"/><field name="new_values"/><field name="reason"/></group></sheet></form></field></record>
+ <record id="action_booking_security_audit" model="ir.actions.act_window"><field name="name">سجل التدقيق الحساس</field><field name="res_model">qimam.booking.security.audit</field><field name="view_mode">tree,form</field></record>
+ <menuitem id="menu_booking_security_audit" name="سجل التدقيق" parent="menu_qimam_booking_config" action="action_booking_security_audit" sequence="80" groups="qimamhd_booking_v2.group_booking_manager"/>
+</odoo>

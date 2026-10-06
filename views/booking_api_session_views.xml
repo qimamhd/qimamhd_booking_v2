@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_booking_api_session_tree" model="ir.ui.view"><field name="name">qimam.booking.api.session.tree</field><field name="model">qimam.booking.api.session</field><field name="arch" type="xml"><tree create="0" edit="0"><field name="user_id"/><field name="branch_id"/><field name="device_name"/><field name="device_id"/><field name="last_seen_at"/><field name="access_expires_at"/><field name="refresh_expires_at"/><field name="revoked_at"/><field name="active"/></tree></field></record>
+ <record id="action_booking_api_sessions" model="ir.actions.act_window"><field name="name">جلسات API</field><field name="res_model">qimam.booking.api.session</field><field name="view_mode">tree</field></record>
+ <menuitem id="menu_booking_api_sessions" name="جلسات API" parent="menu_qimam_booking_config" action="action_booking_api_sessions" sequence="85" groups="qimamhd_booking_v2.group_booking_manager"/>
+</odoo>

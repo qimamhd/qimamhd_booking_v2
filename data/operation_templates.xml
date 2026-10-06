@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+ <record id="op_template_venue_ready" model="qimam.booking.operation.template"><field name="name">جاهزية القاعة والموقع</field><field name="category">venue</field><field name="timing">before</field><field name="blocks_event">1</field></record>
+ <record id="op_template_layout" model="qimam.booking.operation.template"><field name="name">اعتماد توزيع وتجهيز المكان</field><field name="sequence">20</field><field name="category">venue</field><field name="timing">before</field><field name="blocks_event">1</field></record>
+ <record id="op_template_safety" model="qimam.booking.operation.template"><field name="name">فحص السلامة ومسارات الدخول</field><field name="sequence">30</field><field name="category">safety</field><field name="timing">day</field><field name="blocks_event">1</field></record>
+ <record id="op_template_guest" model="qimam.booking.operation.template"><field name="name">تأكيد نقطة استقبال الضيوف</field><field name="sequence">40</field><field name="category">guest</field><field name="timing">day</field></record>
+ <record id="op_template_handover" model="qimam.booking.operation.template"><field name="name">إغلاق وتسليم الموقع</field><field name="sequence">90</field><field name="category">handover</field><field name="timing">after</field><field name="blocks_event">0</field></record>
+</odoo>

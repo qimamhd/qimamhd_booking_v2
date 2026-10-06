@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_executive_dashboard" inherit_id="web.assets_backend" name="Qimam Executive Intelligence">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/executive_dashboard.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/executive_dashboard.scss"/>
+ </xpath>
+</template>
+<record id="action_executive_dashboard" model="ir.actions.client"><field name="name">ذكاء الإدارة</field><field name="tag">qimam_executive_dashboard</field></record>
+<menuitem id="menu_executive_dashboard" name="ذكاء الإدارة" parent="menu_qimam_booking_root" action="action_executive_dashboard" sequence="8" groups="qimamhd_booking_v2.group_booking_manager"/>
+</odoo>

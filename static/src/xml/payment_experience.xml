@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamPaymentExperience"><div class="qp_host"/></t>
+<t t-name="QimamPaymentExperienceBody">
+<div class="qp_page" dir="rtl">
+ <header class="qp_head"><div><span class="qp_kicker">PAYMENT &amp; CONFIRMATION</span><h1>إغلاق الحجز بثقة.</h1><p><t t-esc="d.customer"/> · <t t-esc="d.name"/></p></div><button class="qp_refresh">↻</button></header>
+ <div class="qp_grid">
+  <main>
+   <section class="qp_gate" t-attf-class="#{d.ready ? 'ready' : 'waiting'}"><div class="qp_gate_icon"><t t-if="d.ready">✓</t><t t-if="!d.ready">◷</t></div><div><span>بوابة التأكيد</span><h2 t-esc="d.gate"/><small t-if="d.policy == 'deposit'">السياسة: عربون <t t-esc="d.deposit_percent"/>%</small><small t-if="d.policy == 'invoice'">السياسة: فاتورة مرحلة</small><small t-if="d.policy == 'manual'">السياسة: موافقة يدوية</small></div></section>
+   <section class="qp_timeline"><div class="qp_section_title">خطة الدفعات</div>
+    <div class="qp_empty" t-if="!d.schedule.length">لم تُنشأ خطة دفعات بعد. اختر الخطة المناسبة من اللوحة الجانبية.</div>
+    <t t-foreach="d.schedule" t-as="x"><div t-attf-class="qp_due state_#{x.state}"><i/><div><strong t-esc="x.name"/><small t-esc="x.date"/></div><div class="qp_due_money"><strong><t t-esc="x.amount"/> <t t-esc="d.currency"/></strong><small t-if="x.open">متبقي <t t-esc="x.open"/></small><small t-if="!x.open">مغطاة ✓</small></div></div></t>
+   </section>
+  </main>
+  <aside class="qp_summary">
+   <span class="qp_kicker">FINANCIAL SNAPSHOT</span><h3>ملخص مالي</h3>
+   <div class="qp_total"><span>قيمة العقد</span><strong><t t-esc="d.total"/> <t t-esc="d.currency"/></strong></div>
+   <div class="qp_meter"><i t-att-style="'width:'+Math.min(d.total ? (d.paid/d.total*100) : 0,100)+'%;'"/></div>
+   <div class="qp_pair"><div><span>مدفوع</span><strong><t t-esc="d.paid"/> <t t-esc="d.currency"/></strong></div><div><span>مستحق بالفواتير</span><strong><t t-esc="d.due"/> <t t-esc="d.currency"/></strong></div></div>
+   <div class="qp_deposit" t-if="d.policy == 'deposit'"><span>العربون المطلوب للتأكيد</span><strong><t t-esc="d.deposit_required"/> <t t-esc="d.currency"/></strong></div>
+   <div class="qp_next" t-if="d.next_due"><span>الاستحقاق القادم</span><strong t-esc="d.next_due"/></div>
+   <div class="qp_overdue" t-if="d.overdue">متأخر: <t t-esc="d.overdue"/> <t t-esc="d.currency"/></div>
+   <div class="qp_builder"><span>إنشاء خطة</span><select class="qp_mode"><option value="deposit_balance">عربون + رصيد</option><option value="equal">أقساط متساوية</option></select><div><input class="qp_pct" type="number" min="1" max="99" t-att-value="d.deposit_percent || 30"/><input class="qp_count" type="number" min="2" value="3"/></div><input class="qp_first" type="date"/><button class="qp_schedule">بناء الخطة</button></div>
+   <button t-if="d.state != 'confirmed'" t-att-disabled="!d.ready" class="qp_confirm">تأكيد الحجز</button>
+   <div t-if="d.state == 'confirmed'" class="qp_confirmed">✓ الحجز مؤكد</div>
+   <button class="qp_open">التفاصيل الكاملة</button>
+   <small class="qp_truth">الدفع الفعلي مأخوذ من الفواتير والتسويات في المحاسبة، وليس من خطة الدفعات.</small>
+  </aside>
+ </div>
+</div>
+</t>
+</templates>

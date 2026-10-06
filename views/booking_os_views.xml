@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_booking_os" inherit_id="web.assets_backend" name="Qimam Booking OS">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/booking_os.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/booking_os.scss"/>
+ </xpath>
+</template>
+<record id="action_booking_os" model="ir.actions.client"><field name="name">مركز التشغيل</field><field name="tag">qimam_booking_os</field></record>
+</odoo>

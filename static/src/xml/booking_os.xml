@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamBookingOS"><div class="qb_shell_host"/></t>
+
+<t t-name="QimamBookingOSShell">
+<div class="qb_os" dir="rtl">
+ <div class="qb_hero">
+  <div class="qb_brand"><div class="qb_mark">Q</div><div><h1>مركز التشغيل</h1><p><t t-esc="data.company.name"/> · <t t-esc="data.today"/> · <t t-esc="data.hijri"/></p></div></div>
+  <div class="qb_mode_switch" t-if="data.company.mode == 'mixed'">
+   <button t-attf-class="qb_mode #{mode == 'events' ? 'active' : ''}" data-mode="events">القاعات</button>
+   <button t-attf-class="qb_mode #{mode == 'hotel' ? 'active' : ''}" data-mode="hotel">الفندق</button>
+  </div>
+ </div>
+
+ <t t-if="mode == 'events'">
+  <div class="qb_metrics">
+   <div class="qb_metric"><span>مناسبات اليوم</span><strong t-esc="data.metrics.events_today"/><small>كل ما يحدث اليوم</small></div>
+   <div class="qb_metric warm"><span>بانتظار التأكيد</span><strong t-esc="data.metrics.event_holds"/><small>حجوزات مؤقتة</small></div>
+   <div class="qb_metric action" role="button"><span>الخطوة الأسرع</span><strong>تقويم القاعات</strong><small>شاهد الشهر واختر اليوم</small></div>
+  </div>
+  <div class="qb_feature">
+   <div><span class="qb_eyebrow">EVENT PLANNER</span><h2>الشهر كامل أمامك.<br/>بدون جداول مرهقة.</h2><p>ميلادي وهجري، إشغال واضح، ثم تفاصيل الفترات عند اختيار اليوم فقط.</p>
+    <div class="qb_actions"><button class="btn qb_primary qb_open_halls">فتح تقويم القاعات</button><button class="btn qb_secondary qb_new_event">＋ حجز سريع</button></div>
+   </div>
+   <div class="qb_visual qb_calendar_art"><div class="qb_art_top"><b>هذا الشهر</b><span>متاح ● &#160; جزئي ● &#160; مكتمل ●</span></div>
+    <div class="qb_art_days"><i>12<small>متاح</small></i><i class="busy">13<small>2 متاح</small></i><i class="full">14<small>مكتمل</small></i><i>15<small>متاح</small></i><i class="busy">16<small>1 انتظار</small></i><i>17<small>متاح</small></i></div>
+   </div>
+  </div>
+ </t>
+
+ <t t-if="mode == 'hotel'">
+  <div class="qb_metrics">
+   <div class="qb_metric"><span>نزلاء حاليون</span><strong t-esc="data.metrics.stays_active"/><small>إقامات نشطة</small></div>
+   <div class="qb_metric cool"><span>وصول اليوم</span><strong t-esc="data.metrics.checkins"/><small>Check-in</small></div>
+   <div class="qb_metric warm"><span>مغادرة اليوم</span><strong t-esc="data.metrics.checkouts"/><small>Check-out</small></div>
+  </div>
+  <div class="qb_feature qb_hotel_feature">
+   <div><span class="qb_eyebrow">SMART STAY SEARCH</span><h2>ابدأ من سؤال العميل،<br/>وليس من رقم الغرفة.</h2><p>حدد المدة وعدد الضيوف، ثم اعرض فقط الغرف المناسبة والمتاحة فعليًا.</p>
+    <div class="qb_stay_search"><label>الوصول<input class="qb_ci" type="date"/></label><label>المغادرة<input class="qb_co" type="date"/></label><label>الضيوف<input class="qb_guests" type="number" min="1" value="1"/></label><button class="qb_primary qb_search_stay">بحث</button></div>
+   </div>
+   <div class="qb_visual"><div class="qb_results"><div class="qb_empty"><b>ابحث عن إقامة</b><span>ستظهر أفضل الخيارات هنا فقط.</span></div></div></div>
+  </div>
+  <div class="qb_bottom_actions"><button class="qb_secondary qb_open_hotel">عرض مخطط الغرف</button><button class="qb_secondary qb_new_stay">＋ حجز إقامة</button></div>
+ </t>
+</div>
+</t>
+
+<t t-name="QimamStayOptions">
+<div class="qb_options">
+<t t-if="result.options.length">
+ <div class="qb_option_head"><b><t t-esc="result.nights"/> ليالٍ</b><span>الغرف المتاحة المناسبة</span></div>
+ <t t-foreach="result.options" t-as="o">
+  <button class="qb_option" t-att-data-id="o.id" t-att-data-ci="ci" t-att-data-co="co">
+   <div><strong t-esc="o.name"/><small><t t-esc="o.type"/> · حتى <t t-esc="o.capacity"/> ضيوف</small></div>
+   <div class="qb_price"><strong><t t-esc="o.total"/> <t t-esc="o.currency"/></strong><small>للإقامة</small></div>
+  </button>
+ </t>
+</t>
+<t t-if="!result.options.length"><div class="qb_empty"><b>لا يوجد خيار مطابق</b><span>غيّر المدة أو عدد الضيوف.</span></div></t>
+</div>
+</t>
+</templates>

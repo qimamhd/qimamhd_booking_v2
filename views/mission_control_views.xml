@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_mission_control" inherit_id="web.assets_backend" name="Qimam Mission Control">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/mission_control.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/mission_control.scss"/>
+ </xpath>
+</template>
+<record id="action_mission_control" model="ir.actions.client"><field name="name">جاهزية المناسبة</field><field name="tag">qimam_mission_control</field></record>
+<record id="view_operation_template_tree" model="ir.ui.view"><field name="name">qimam.booking.operation.template.tree</field><field name="model">qimam.booking.operation.template</field><field name="arch" type="xml"><tree editable="bottom"><field name="sequence" widget="handle"/><field name="name"/><field name="category"/><field name="timing"/><field name="required"/><field name="blocks_event"/><field name="service_id"/><field name="active"/></tree></field></record>
+<record id="action_operation_templates" model="ir.actions.act_window"><field name="name">قوالب الجاهزية</field><field name="res_model">qimam.booking.operation.template</field><field name="view_mode">tree</field></record>
+</odoo>

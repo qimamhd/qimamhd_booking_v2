@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_qimam_period_tree" model="ir.ui.view">
+  <field name="name">qimam.booking.period.tree</field>
+  <field name="model">qimam.booking.period</field>
+  <field name="arch" type="xml">
+   <tree editable="bottom">
+    <field name="sequence" widget="handle"/><field name="name"/><field name="code"/>
+    <field name="time_from" widget="float_time"/><field name="time_to" widget="float_time"/>
+    <field name="active"/>
+   </tree>
+  </field>
+ </record>
+ <record id="action_qimam_period" model="ir.actions.act_window">
+  <field name="name">فترات الحجز</field><field name="res_model">qimam.booking.period</field>
+  <field name="view_mode">tree,form</field>
+ </record>
+</odoo>

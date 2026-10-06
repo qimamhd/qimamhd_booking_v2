@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<record id="res_config_settings_booking_confirmation_policy" model="ir.ui.view">
+ <field name="name">res.config.settings.qimam.booking.confirmation.policy</field>
+ <field name="model">res.config.settings</field>
+ <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+ <field name="arch" type="xml">
+  <xpath expr="//div[hasclass('settings')]" position="inside">
+   <div class="app_settings_block" data-string="Booking Confirmation" string="Booking Confirmation">
+    <h2>Booking Confirmation</h2>
+    <div class="row mt16 o_settings_container">
+     <div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane">
+      <label for="qimam_booking_confirmation_policy"/><div class="text-muted">Choose the financial gate required before a booking becomes confirmed.</div>
+      <field name="qimam_booking_confirmation_policy"/>
+      <div class="mt8" attrs="{'invisible':[('qimam_booking_confirmation_policy','!=','deposit')]}"><label for="qimam_booking_default_deposit_percent"/><field name="qimam_booking_default_deposit_percent"/></div>
+     </div></div>
+    </div>
+   </div>
+  </xpath>
+ </field>
+</record>
+</odoo>

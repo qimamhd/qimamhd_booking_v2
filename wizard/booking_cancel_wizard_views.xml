@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_booking_cancel_wizard" model="ir.ui.view">
+  <field name="name">qimam.booking.cancel.wizard.form</field><field name="model">qimam.booking.cancel.wizard</field>
+  <field name="arch" type="xml"><form string="إلغاء الحجز">
+   <group>
+    <group><field name="booking_id"/><field name="financial_action" readonly="1"/></group>
+    <group><field name="draft_invoice_count" readonly="1"/><field name="posted_invoice_count" readonly="1"/></group>
+   </group>
+   <group string="الوضع المالي"><field name="amount_paid" readonly="1"/><field name="amount_due" readonly="1"/></group>
+   <field name="cancel_draft_invoices" attrs="{'invisible':[('draft_invoice_count','=',0)]}"/>
+   <field name="reason" placeholder="سبب الإلغاء مطلوب لحفظ الأثر التشغيلي..."/>
+   <div class="alert alert-warning" role="alert" attrs="{'invisible':[('posted_invoice_count','=',0)]}">
+    توجد فاتورة مرحلة. لن يحرر النظام الفترة قبل معالجة المستند المالي بطريقة صحيحة.
+   </div>
+   <footer><button name="action_cancel" type="object" string="تأكيد الإلغاء" class="btn-primary"/><button string="رجوع" special="cancel" class="btn-secondary"/></footer>
+  </form></field>
+ </record>
+</odoo>

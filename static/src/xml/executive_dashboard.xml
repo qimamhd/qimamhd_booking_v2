@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamExecutiveDashboard"><div class="qe_host"/></t>
+<t t-name="QimamExecutiveDashboardBody">
+<div class="qe_page" dir="rtl">
+ <header class="qe_head"><div><span class="qe_kicker">EXECUTIVE INTELLIGENCE</span><h1>الصورة كاملة. بدون ضجيج.</h1><p><t t-esc="d.start"/> ← <t t-esc="d.end"/> · مقارنة بالفترة السابقة تلقائيًا</p></div><div class="qe_filters"><button class="qe_range" data-days="7">7 أيام</button><button class="qe_range" data-days="30">30 يوم</button><button class="qe_range" data-days="90">90 يوم</button><input class="qe_start" type="date" t-att-value="d.start"/><input class="qe_end" type="date" t-att-value="d.end"/><button class="qe_apply">تطبيق</button></div></header>
+ <section class="qe_kpis">
+  <button class="qe_kpi qe_drill" data-metric="bookings"><span>الحجوزات</span><strong t-esc="d.bookings"/><small t-if="d.comparison.bookings !== null"><t t-esc="d.comparison.bookings &gt;= 0 ? '↑ ' : '↓ '"/><t t-esc="Math.abs(d.comparison.bookings)"/>% عن السابق</small></button>
+  <button class="qe_kpi qe_drill" data-metric="revenue"><span>قيمة الحجوزات المؤكدة</span><strong><t t-esc="d.revenue"/> <em t-esc="d.currency"/></strong><small t-if="d.comparison.revenue !== null"><t t-esc="d.comparison.revenue &gt;= 0 ? '↑ ' : '↓ '"/><t t-esc="Math.abs(d.comparison.revenue)"/>%</small></button>
+  <div class="qe_kpi"><span>إشغال القاعات</span><strong><t t-esc="d.occupancy"/>%</strong><small>من إجمالي القاعات × الفترات</small></div>
+  <button class="qe_kpi qe_drill" data-metric="cancelled"><span>الإلغاء</span><strong><t t-esc="d.cancel_rate"/>%</strong><small><t t-esc="d.cancelled"/> حجوزات ملغاة</small></button>
+  <div class="qe_kpi"><span>Hold → Confirmed</span><strong><t t-esc="d.conversion"/>%</strong><small><t t-esc="d.holds"/> انتظار · <t t-esc="d.confirmed"/> مؤكد</small></div>
+ </section>
+ <section class="qe_story">
+  <div class="qe_panel qe_forecast"><div class="qe_panel_head"><div><span class="qe_kicker">FORWARD VIEW</span><h2>ما القادم؟</h2></div><small>الحجوزات المؤكدة الحالية فقط</small></div>
+   <div class="qe_forecast_grid"><t t-foreach="d.forecast" t-as="f"><div><span><t t-esc="f.days"/> يوم</span><strong><t t-esc="f.value"/> <em t-esc="d.currency"/></strong><small><t t-esc="f.bookings"/> حجوزات</small><i t-att-style="'width:'+Math.min(f.bookings*8,100)+'%;'"/></div></t></div>
+  </div>
+  <button class="qe_panel qe_attention qe_drill" data-metric="overdue"><span class="qe_kicker">CASH ATTENTION</span><h2>متأخرات الجداول</h2><strong><t t-esc="d.overdue"/> <em t-esc="d.currency"/></strong><p>اضغط للوصول للحجوزات ومراجعة الاستحقاقات.</p></button>
+ </section>
+ <section class="qe_rankings">
+  <div class="qe_panel"><div class="qe_panel_head"><div><span class="qe_kicker">VENUE PERFORMANCE</span><h2>القاعات الأقوى</h2></div></div><div class="qe_rank_empty" t-if="!d.top_halls.length">لا توجد بيانات في الفترة.</div><t t-foreach="d.top_halls" t-as="x"><div class="qe_rank"><div><strong t-esc="x.name"/><small><t t-esc="x.bookings"/> حجوزات</small></div><b><t t-esc="x.revenue"/> <em t-esc="d.currency"/></b></div></t></div>
+  <div class="qe_panel"><div class="qe_panel_head"><div><span class="qe_kicker">SERVICE MIX</span><h2>الخدمات الأكثر قيمة</h2></div></div><div class="qe_rank_empty" t-if="!d.top_services.length">لا توجد خدمات مباعة في الفترة.</div><t t-foreach="d.top_services" t-as="x"><div class="qe_rank"><div><strong t-esc="x.name"/><small>كمية <t t-esc="x.qty"/></small></div><b><t t-esc="x.revenue"/> <em t-esc="d.currency"/></b></div></t></div>
+ </section>
+ <footer class="qe_note">الأرقام المالية هنا مؤشرات إدارية للحجوزات، وليست بديلًا عن القوائم المحاسبية الرسمية.</footer>
+</div>
+</t>
+</templates>

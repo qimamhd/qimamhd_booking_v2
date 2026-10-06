@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_qimam_hall_tree" model="ir.ui.view">
+  <field name="name">qimam.booking.hall.tree</field><field name="model">qimam.booking.hall</field>
+  <field name="arch" type="xml"><tree>
+   <field name="sequence" widget="handle"/><field name="name"/><field name="code"/>
+   <field name="capacity"/><field name="base_price"/><field name="active"/>
+  </tree></field>
+ </record>
+ <record id="view_qimam_hall_form" model="ir.ui.view">
+  <field name="name">qimam.booking.hall.form</field><field name="model">qimam.booking.hall</field>
+  <field name="arch" type="xml"><form string="القاعة"><sheet>
+   <div class="oe_title"><label for="name"/><h1><field name="name"/></h1></div>
+   <group><group><field name="code"/><field name="capacity"/></group>
+   <group><field name="base_price"/><field name="tax_ids" widget="many2many_tags"/></group></group>
+   <notebook><page string="الوصف"><field name="description" placeholder="معلومات مختصرة تساعد فريق الحجز..."/></page></notebook>
+  </sheet></form></field>
+ </record>
+ <record id="action_qimam_hall" model="ir.actions.act_window">
+  <field name="name">القاعات</field><field name="res_model">qimam.booking.hall</field><field name="view_mode">tree,form</field>
+ </record>
+</odoo>

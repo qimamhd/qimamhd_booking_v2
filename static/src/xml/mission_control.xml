@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamMissionControl"><div class="qm_host"/></t>
+<t t-name="QimamMissionControlBody">
+<div class="qm_page" dir="rtl">
+ <header class="qm_head"><div><span class="qm_kicker">EVENT MISSION CONTROL</span><h1>جاهزية المناسبة</h1><p><t t-esc="d.customer"/> · <t t-esc="d.hall"/> · <t t-esc="d.date"/></p></div><button class="qm_open">تفاصيل الحجز</button></header>
+ <section class="qm_pulse">
+  <div class="qm_score"><div class="qm_ring" t-att-style="'--p:'+d.readiness"><strong><t t-esc="d.readiness"/>%</strong><span>جاهزية</span></div><div><span class="qm_kicker">OPERATIONAL READINESS</span><h2 t-if="d.blockers">هناك <t t-esc="d.blockers"/> عناصر تمنع بدء المناسبة.</h2><h2 t-if="!d.blockers and d.readiness &lt; 100">التجهيز يسير بدون عوائق حرجة.</h2><h2 t-if="!d.blockers and d.readiness &gt;= 100">كل شيء جاهز للانطلاق.</h2><small>الجاهزية التشغيلية مستقلة عن الحالة المالية.</small></div></div>
+  <div class="qm_fin"><span>الوضع المالي</span><strong t-esc="d.financial.status"/><small><t t-esc="d.financial.paid"/> / <t t-esc="d.financial.total"/> <t t-esc="d.financial.currency"/></small></div>
+ </section>
+ <div class="qm_empty" t-if="!d.items.before.length and !d.items.day.length and !d.items.after.length"><b>لم تُبنَ خطة التشغيل بعد.</b><span>أنشئها من القالب، ثم عدّل المسؤوليات والتفاصيل حسب المناسبة.</span><button class="qm_generate">إنشاء خطة الجاهزية</button></div>
+ <div class="qm_columns" t-if="d.items.before.length or d.items.day.length or d.items.after.length">
+  <t t-foreach="[['before','قبل المناسبة'],['day','يوم المناسبة'],['after','بعد المناسبة']]" t-as="g">
+   <section class="qm_column"><div class="qm_col_head"><span t-esc="g[1]"/><b t-esc="d.items[g[0]].length"/></div>
+    <t t-foreach="d.items[g[0]]" t-as="x"><article t-attf-class="qm_task state_#{x.state} #{x.blocks ? 'blocking' : ''}">
+     <div class="qm_task_top"><span t-attf-class="qm_dot state_#{x.state}"/><div><strong t-esc="x.name"/><small><t t-esc="x.responsible"/><t t-if="x.blocks"> · عنصر حرج</t></small></div></div>
+     <p t-if="x.note" t-esc="x.note"/>
+     <div class="qm_actions"><button t-if="x.state == 'todo'" class="qm_item_action" t-att-data-id="x.id" data-action="start">بدء</button><button t-if="x.state != 'done'" class="qm_item_action primary" t-att-data-id="x.id" data-action="done">تم ✓</button><button t-if="x.state != 'blocked' and x.state != 'done'" class="qm_item_action warn" t-att-data-id="x.id" data-action="block">عائق</button><button t-if="x.state == 'done' or x.state == 'blocked'" class="qm_item_action" t-att-data-id="x.id" data-action="reset">إعادة</button></div>
+    </article></t>
+   </section>
+  </t>
+ </div>
+ <footer class="qm_bottom" t-if="d.items.before.length or d.items.day.length"><div><strong>قرار البدء</strong><span t-if="d.blockers">أكمل العناصر الحرجة أولًا.</span><span t-if="!d.blockers">لا توجد عوائق تشغيلية حرجة.</span></div><button class="qm_start_event" t-att-disabled="d.blockers &gt; 0 or d.state != 'preparing'">بدء المناسبة</button></footer>
+</div>
+</t>
+</templates>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="res_config_settings_booking_demo" model="ir.ui.view">
+  <field name="name">res.config.settings.qimam.booking.demo</field>
+  <field name="model">res.config.settings</field>
+  <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+  <field name="arch" type="xml">
+   <xpath expr="//div[hasclass('settings')]" position="inside">
+    <div class="app_settings_block" data-string="Booking Demo" string="Booking Demo" data-key="qimamhd_booking_v2">
+     <h2>النسخة التجريبية المتكاملة</h2>
+     <div class="row mt16 o_settings_container">
+      <div class="col-12 col-lg-8 o_setting_box">
+       <div class="o_setting_left_pane"><span class="fa fa-flask fa-2x"/></div>
+       <div class="o_setting_right_pane">
+        <span class="o_form_label">بيانات تجريبية مترابطة للقاعات والفندق</span>
+        <div class="text-muted">لا يتم إنشاء أي بيانات عند تثبيت الموديول. اختر الفرع ثم اضغط الزر مرة واحدة لإنشاء سيناريوهات تساعدك على تجربة النظام من البداية للنهاية.</div>
+        <div class="content-group mt16">
+         <label for="qimam_demo_branch_id"/><field name="qimam_demo_branch_id" class="oe_inline"/>
+        </div>
+        <div class="mt8"><field name="qimam_demo_exists" invisible="1"/><field name="qimam_demo_summary" readonly="1" nolabel="1"/></div>
+        <button name="action_qimam_create_demo" type="object" string="إنشاء نسخة ديمو متكاملة"
+                class="btn btn-primary mt16" icon="fa-magic"
+                confirm="سيتم إنشاء بيانات تجريبية مترابطة داخل الفرع المحدد فقط. لن يتم حذف أو تعديل البيانات الحقيقية. هل تريد المتابعة؟"
+                groups="qimamhd_booking_v2.group_booking_manager"/>
+        <div class="alert alert-info mt16" role="alert">
+         تشمل الديمو: عملاء، قاعات، فترات، خدمات، باقة، غرف وجناح، حالات الحجز المختلفة، يوم كامل، خصم، إلغاء، Check-in/Check-out وعمليات جاهزية.
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </xpath>
+  </field>
+ </record>
+</odoo>

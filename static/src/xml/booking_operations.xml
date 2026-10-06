@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="QimamOperations"><div class="qo_host"/><div class="qo_drawer_host"/></t>
+<t t-name="QimamOperationsBody">
+<div class="qo_page" dir="rtl">
+ <header class="qo_head"><div><span class="qo_kicker">TODAY OPERATIONS</span><h1>تشغيل اليوم</h1><p><t t-esc="data.date"/> · <t t-esc="data.hijri"/></p></div><button class="qo_refresh">↻ تحديث</button></header>
+ <div class="qo_intro"><strong>المطلوب الآن فقط.</strong><span>الوصول والمغادرة والمناسبات في مسار واحد، بدون ضوضاء إدارية.</span></div>
+ <div class="qo_list">
+  <t t-if="!data.items.length"><div class="qo_empty"><b>اليوم هادئ</b><span>لا توجد عمليات تحتاج متابعة الآن.</span></div></t>
+  <t t-foreach="data.items" t-as="x">
+   <button class="qo_item" t-att-data-kind="x.kind" t-att-data-id="x.id">
+    <div t-attf-class="qo_icon #{x.kind}"><t t-if="x.kind == 'arrival'">↓</t><t t-if="x.kind == 'departure'">↑</t><t t-if="x.kind == 'event'">◆</t></div>
+    <div class="qo_main"><span class="qo_type" t-esc="x.time_label"/><strong t-esc="x.title"/><small><t t-esc="x.subtitle"/><t t-if="x.attention"> · <t t-esc="x.attention"/></t></small></div>
+    <span t-attf-class="qo_state state_#{x.state}" t-esc="x.state"/>
+    <span class="qo_arrow">‹</span>
+   </button>
+  </t>
+ </div>
+</div>
+</t>
+
+<t t-name="QimamBookingDrawer">
+<div class="qo_overlay qo_close"></div>
+<aside class="qo_drawer" dir="rtl">
+ <button class="qo_x qo_close">×</button>
+ <span class="qo_kicker">BOOKING SNAPSHOT</span><h2 t-esc="r.customer"/>
+ <div class="qo_ref"><t t-esc="r.name"/> · <t t-esc="r.state"/></div>
+ <div class="qo_resource"><span>المورد</span><strong t-esc="r.resource"/></div>
+ <div class="qo_dates"><div><span>من</span><strong t-esc="r.start"/></div><div t-if="r.end"><span>إلى</span><strong t-esc="r.end"/></div></div>
+ <div class="qo_amount"><span>القيمة</span><strong><t t-esc="r.amount"/> <t t-esc="r.currency"/></strong></div>
+ <div class="qo_attention" t-if="r.attention" t-esc="r.attention"/>
+ <div class="qo_drawer_actions">
+  <button t-if="r.primary_action" class="qo_primary" t-att-data-model="r.model" t-att-data-id="r.id" t-att-data-action="r.primary_action"><t t-if="r.primary_action == 'checkin'">تسجيل الدخول</t><t t-if="r.primary_action == 'checkout'">تسجيل المغادرة</t></button>
+  <button class="qo_open" t-att-data-model="r.model" t-att-data-id="r.id">التفاصيل الكاملة</button>
+ </div>
+</aside>
+</t>
+</templates>

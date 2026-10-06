@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+ <record id="view_booking_payment_schedule_tree" model="ir.ui.view">
+  <field name="name">qimam.booking.payment.schedule.tree</field>
+  <field name="model">qimam.booking.payment.schedule</field>
+  <field name="arch" type="xml">
+   <tree decoration-danger="state == 'due'" decoration-success="state == 'paid'">
+    <field name="sequence" widget="handle"/><field name="name"/><field name="due_date"/>
+    <field name="amount" sum="الإجمالي"/><field name="state"/>
+   </tree>
+  </field>
+ </record>
+ <record id="view_booking_payment_schedule_form" model="ir.ui.view">
+  <field name="name">qimam.booking.payment.schedule.form</field>
+  <field name="model">qimam.booking.payment.schedule</field>
+  <field name="arch" type="xml"><form><sheet><group>
+   <field name="booking_id"/><field name="name"/><field name="due_date"/><field name="amount"/><field name="note"/>
+  </group></sheet></form></field>
+ </record>
+</odoo>

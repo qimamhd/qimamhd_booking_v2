@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<template id="assets_backend_booking_studio" inherit_id="web.assets_backend" name="Qimam Booking Studio">
+ <xpath expr="." position="inside">
+  <script type="text/javascript" src="/qimamhd_booking_v2/static/src/js/booking_studio.js"/>
+  <link rel="stylesheet" type="text/scss" href="/qimamhd_booking_v2/static/src/scss/booking_studio.scss"/>
+ </xpath>
+</template>
+<record id="action_booking_studio" model="ir.actions.client"><field name="name">حجز جديد</field><field name="tag">qimam_booking_studio</field></record>
+</odoo>

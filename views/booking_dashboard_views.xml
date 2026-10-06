@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><record id="view_booking_dashboard_form" model="ir.ui.view"><field name="name">qimam.booking.dashboard.form</field><field name="model">qimam.booking.dashboard</field><field name="arch" type="xml">
+<form string="مركز الحجوزات" create="false"><sheet><div class="oe_title"><h1>مركز الحجوزات</h1><div class="text-muted">اليوم أمامك بوضوح، والتفاصيل عند الحاجة فقط.</div></div>
+<group><group><field name="date"/></group><group><button name="action_quick" type="object" string="حجز سريع" class="oe_highlight"/><button name="action_availability" type="object" string="عرض التوفر" class="oe_link"/></group></group>
+<separator string="ملخص اليوم"/><group col="4"><field name="booking_count" string="الحجوزات" readonly="1"/><field name="confirmed_count" string="المؤكدة / التشغيلية" readonly="1"/><field name="hold_count" string="بانتظار التأكيد" readonly="1"/><field name="attention_count" string="تحتاج انتباه" readonly="1"/></group>
+<group><button name="action_day" type="object" string="فتح حجوزات اليوم" class="oe_link"/><button name="action_attention" type="object" string="ما يحتاج انتباهي؟" class="oe_link" attrs="{'invisible':[('attention_count','=',0)]}"/></group>
+</sheet></form></field></record><record id="action_booking_dashboard" model="ir.actions.act_window"><field name="name">مركز الحجوزات</field><field name="res_model">qimam.booking.dashboard</field><field name="view_mode">form</field><field name="target">current</field></record></odoo>

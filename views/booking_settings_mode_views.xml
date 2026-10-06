@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><record id="res_config_settings_view_form_booking_mode" model="ir.ui.view"><field name="name">res.config.settings.booking.mode</field><field name="model">res.config.settings</field><field name="inherit_id" ref="base.res_config_settings_view_form"/><field name="arch" type="xml">
+<xpath expr="//div[hasclass('settings')]" position="inside"><div class="app_settings_block" data-string="Booking" string="Booking" data-key="qimamhd_booking_v2"><h2>تجربة الحجز</h2><div class="row mt16 o_settings_container"><div class="col-12 col-lg-6 o_setting_box"><div class="o_setting_right_pane"><label for="qimam_booking_business_mode"/><div class="text-muted">يفصل طريقة عرض القاعات عن الغرف بدون خلط منطق الحجز.</div><div class="content-group"><field name="qimam_booking_business_mode"/></div></div></div></div></div></xpath>
+</field></record></odoo>
