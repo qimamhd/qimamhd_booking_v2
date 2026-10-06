@@ -1,0 +1,3 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo><menuitem id="menu_qimam_booking_root" name="الحجوزات" sequence="10" groups="qimamhd_booking_v2.group_booking_user" />
+ <menuitem id="menu_qimam_booking_config" name="التهيئة" parent="menu_qimam_booking_root" sequence="90" groups="qimamhd_booking_v2.group_booking_manager" /></odoo>
