@@ -133,6 +133,22 @@ class BookingApiV2(http.Controller):
             result.append({"hall_id":hall.id,"hall_name":hall.name,"date":date.isoformat(),"periods":cells})
         return ok({"mode":"event","items":result})
 
+    @http.route("/api/v2/events/board",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def event_board(self,**payload):
+        branch=active_branch(payload)
+        value=fields.Date.from_string(payload.get("date") or fields.Date.context_today(request.env.user))
+        periods=request.env["qimam.booking.period"].search([("branch_id","=",branch.id),("active","=",True)],order="sequence,id")
+        halls=request.env["qimam.booking.hall"].search([("branch_id","=",branch.id),("active","=",True)],order="sequence,id")
+        rows=[]
+        for hall in halls:
+            cells=[]
+            for period in periods:
+                booking=request.env["qimam.booking"].search([("branch_id","=",branch.id),("hall_id","=",hall.id),("booking_date","=",value),("state","in",EVENT_BLOCKING),("period_line_ids.period_id","=",period.id)],limit=1)
+                cells.append({"period_id":period.id,"period_name":period.name,"booking_id":booking.id or False,"booking_number":booking.name if booking else "","customer":booking.partner_id.name if booking else "","state":booking.state if booking else "available"})
+            rows.append({"hall_id":hall.id,"hall_name":hall.name,"capacity":hall.capacity,"cells":cells})
+        return ok({"date":value.isoformat(),"periods":[{"id":p.id,"name":p.name} for p in periods],"rows":rows})
+
     @http.route("/api/v2/events/bookings/create",type="json",auth="none",methods=["POST"],csrf=False)
     @guarded
     def event_create(self,**payload):
@@ -153,6 +169,23 @@ class BookingApiV2(http.Controller):
         })
         if payload.get("hold"):booking.action_hold()
         return ok(self._event(booking))
+
+
+    @http.route("/api/v2/events/bookings/list",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def event_list(self,**payload):
+        branch=active_branch(payload)
+        date_from=fields.Date.from_string(payload.get("date_from") or fields.Date.context_today(request.env.user))
+        date_to=fields.Date.from_string(payload.get("date_to") or date_from)
+        if date_to < date_from: raise ValidationError("date_to must be on or after date_from.")
+        limit=min(max(int(payload.get("limit") or 100),1),200)
+        domain=[("branch_id","=",branch.id),("booking_date",">=",date_from),("booking_date","<=",date_to)]
+        if payload.get("states"):
+            states=payload["states"] if isinstance(payload["states"],list) else [payload["states"]]
+            domain.append(("state","in",states))
+        rows=request.env["qimam.booking"].search(domain,order="booking_date asc,id asc",limit=limit)
+        return ok({"mode":"event","date_from":date_from.isoformat(),"date_to":date_to.isoformat(),
+                   "items":[self._event(x) for x in rows],"limit":limit})
 
     @http.route("/api/v2/events/bookings/get",type="json",auth="none",methods=["POST"],csrf=False)
     @guarded
@@ -206,6 +239,27 @@ class BookingApiV2(http.Controller):
                               "price_per_night":r.base_price,"total":r.base_price*nights,"currency":r.currency_id.name})
         return ok({"mode":"stay","interval_semantics":"[checkin, checkout)","items":items})
 
+    @http.route("/api/v2/stays/planner",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def stay_planner(self,**payload):
+        from datetime import timedelta
+        branch=active_branch(payload)
+        start=fields.Date.from_string(payload.get("start") or fields.Date.context_today(request.env.user))
+        days=max(7,min(int(payload.get("days") or 7),14))
+        end=start+timedelta(days=days)
+        resources=request.env["qimam.booking.resource"].search([("branch_id","=",branch.id),("booking_mode","=","stay"),("active","=",True)],order="resource_type_id,sequence,name")
+        stays=request.env["qimam.stay.booking"].search([("branch_id","=",branch.id),("state","in",STAY_BLOCKING),("checkin_date","<",end),("checkout_date",">",start)])
+        columns=[{"date":(start+timedelta(days=i)).isoformat(),"day":(start+timedelta(days=i)).day} for i in range(days)]
+        rows=[]
+        for resource in resources:
+            cells=[]
+            for i in range(days):
+                value=start+timedelta(days=i)
+                stay=stays.filtered(lambda x:x.resource_id==resource and x.checkin_date<=value<x.checkout_date)[:1]
+                cells.append({"date":value.isoformat(),"booking_id":stay.id if stay else False,"booking_number":stay.name if stay else "","customer":stay.partner_id.name if stay else "","state":stay.state if stay else "available"})
+            rows.append({"resource_id":resource.id,"name":resource.name,"code":resource.code,"type":resource.resource_type_id.name,"floor":resource.floor or "","cells":cells})
+        return ok({"start":start.isoformat(),"days":days,"columns":columns,"rows":rows,"interval_semantics":"[checkin, checkout)"})
+
     @http.route("/api/v2/stays/bookings/create",type="json",auth="none",methods=["POST"],csrf=False)
     @guarded
     def stay_create(self,**payload):
@@ -222,6 +276,26 @@ class BookingApiV2(http.Controller):
         })
         if payload.get("hold"):rec.action_hold()
         return ok(self._stay(rec))
+
+
+    @http.route("/api/v2/stays/bookings/list",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def stay_list(self,**payload):
+        branch=active_branch(payload)
+        date_from=fields.Date.from_string(payload.get("date_from") or fields.Date.context_today(request.env.user))
+        date_to=fields.Date.from_string(payload.get("date_to") or date_from)
+        if date_to < date_from: raise ValidationError("date_to must be on or after date_from.")
+        limit=min(max(int(payload.get("limit") or 100),1),200)
+        # A stay intersects the requested inclusive calendar window when
+        # checkin <= date_to and checkout > date_from (stay interval is half-open).
+        domain=[("branch_id","=",branch.id),("checkin_date","<=",date_to),("checkout_date",">",date_from)]
+        if payload.get("states"):
+            states=payload["states"] if isinstance(payload["states"],list) else [payload["states"]]
+            domain.append(("state","in",states))
+        rows=request.env["qimam.stay.booking"].search(domain,order="checkin_date asc,id asc",limit=limit)
+        return ok({"mode":"stay","interval_semantics":"[checkin, checkout)",
+                   "date_from":date_from.isoformat(),"date_to":date_to.isoformat(),
+                   "items":[self._stay(x) for x in rows],"limit":limit})
 
     @http.route("/api/v2/stays/bookings/get",type="json",auth="none",methods=["POST"],csrf=False)
     @guarded
@@ -245,6 +319,97 @@ class BookingApiV2(http.Controller):
                 "amount_untaxed":b.amount_untaxed,"amount_tax":b.amount_tax,"amount_total":b.amount_total,"currency":b.currency_id.name,
                 "financial":{"status":b.financial_status,"invoice_progress":b.invoice_progress,"invoiced":b.amount_invoiced,
                              "credited":b.amount_credited,"paid":b.amount_paid,"due":b.amount_due}}
+
+
+    # ---------- Mobile commercial / finance / mission / intelligence ----------
+    @http.route("/api/v2/events/commercial/catalog",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_commercial_catalog(self,**payload):
+        branch=active_branch(payload)
+        services=request.env["qimam.booking.service"].search([("branch_id","=",branch.id),("active","=",True)],order="name")
+        packages=request.env["qimam.booking.package"].search([("branch_id","=",branch.id),("active","=",True)],order="name")
+        return ok({"services":[{"id":x.id,"name":x.name,"price":x.price,"currency":x.currency_id.symbol or x.currency_id.name} for x in services],
+                   "packages":[{"id":p.id,"name":p.name,"description":p.description or "","lines":[{"service_id":l.service_id.id,"name":l.service_id.name,"quantity":l.quantity} for l in p.line_ids]} for p in packages]})
+
+    @http.route("/api/v2/events/commercial/quote",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_commercial_quote(self,**payload):
+        branch=active_branch(payload);hall=company_record("qimam.booking.hall",payload["hall_id"])
+        if hall.branch_id!=branch: raise AccessError("Hall is not in the selected branch.")
+        partner=request.env["res.partner"].browse(int(payload["partner_id"])).exists()
+        if not partner: raise ValidationError("Customer does not exist.")
+        items=payload.get("service_items") or []; raw=hall.base_price or 0.0; lines=[]
+        for item in items:
+            srv=request.env["qimam.booking.service"].browse(int(item.get("id") or 0)).exists();qty=max(float(item.get("qty") or 0),0.0)
+            if not srv or srv.branch_id!=branch or qty<=0: continue
+            raw+=srv.price*qty;lines.append((srv,qty))
+        dtype=payload.get("discount_type") if payload.get("discount_type") in ("none","amount","percent") else "none";dval=max(float(payload.get("discount_value") or 0),0.0)
+        if dtype!="none" and dval>0 and not request.env.user.has_group("qimamhd_booking_v2.group_booking_supervisor"): raise AccessError("Only supervisors or managers may apply discounts.")
+        pct=min(dval,100.0) if dtype=="percent" else (min(dval,raw)/raw*100.0 if dtype=="amount" and raw else 0.0)
+        untaxed=total=0.0
+        hr=hall.tax_ids.compute_all(hall.base_price*(1-pct/100),currency=hall.currency_id,quantity=1,product=False,partner=partner);untaxed+=hr["total_excluded"];total+=hr["total_included"]
+        details=[{"name":hall.name,"qty":1,"base":hall.base_price,"kind":"hall"}]
+        for srv,qty in lines:
+            tr=srv.tax_ids.compute_all(srv.price*(1-pct/100),currency=srv.currency_id,quantity=qty,product=srv.product_id,partner=partner);untaxed+=tr["total_excluded"];total+=tr["total_included"];details.append({"name":srv.name,"qty":qty,"base":srv.price*qty,"kind":"service"})
+        return ok({"raw":raw,"discount_percent":pct,"discount_amount":raw*pct/100,"untaxed":untaxed,"tax":total-untaxed,"total":total,"currency":hall.currency_id.symbol or hall.currency_id.name,"lines":details})
+
+    @http.route("/api/v2/events/commercial/apply",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_commercial_apply(self,**payload):
+        b=company_record("qimam.booking",payload["booking_id"]); branch=active_branch(payload)
+        if b.branch_id!=branch or b.state not in ("draft","hold"): raise UserError("Commercial configuration can only change before confirmation.")
+        dtype=payload.get("discount_type") if payload.get("discount_type") in ("none","amount","percent") else "none";dval=max(float(payload.get("discount_value") or 0),0.0)
+        if dtype!="none" and dval>0 and not request.env.user.has_group("qimamhd_booking_v2.group_booking_supervisor"): raise AccessError("Only supervisors or managers may apply discounts.")
+        cmds=[(5,0,0)]
+        for item in payload.get("service_items") or []:
+            srv=request.env["qimam.booking.service"].browse(int(item.get("id") or 0)).exists();qty=max(float(item.get("qty") or 0),0.0)
+            if srv and srv.branch_id==branch and qty>0:cmds.append((0,0,{"service_id":srv.id,"quantity":qty,"price_unit":srv.price,"tax_ids":[(6,0,srv.tax_ids.ids)]}))
+        vals={"service_line_ids":cmds,"discount_type":dtype,"discount_value":dval};pid=payload.get("package_id")
+        if pid:
+            pkg=request.env["qimam.booking.package"].browse(int(pid)).exists()
+            if pkg and pkg.branch_id==branch:vals["package_id"]=pkg.id
+        b.write(vals);return ok(self._event(b))
+
+    @http.route("/api/v2/events/finance/snapshot",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_finance_snapshot(self,**payload):
+        b=company_record("qimam.booking",payload["booking_id"]);return ok(request.env["qimam.booking.payment.experience"].snapshot(b.id))
+
+    @http.route("/api/v2/events/finance/schedule",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_finance_schedule(self,**payload):
+        b=company_record("qimam.booking",payload["booking_id"]);svc=request.env["qimam.booking.payment.experience"]
+        return ok(svc.build_schedule(b.id,mode=payload.get("mode") or "deposit_balance",deposit_percent=payload.get("deposit_percent") or 30,count=payload.get("count") or 3,first_due_date=payload.get("first_due_date"),interval_months=payload.get("interval_months") or 1))
+
+    @http.route("/api/v2/events/mission",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_mission(self,**payload):
+        b=company_record("qimam.booking",payload["booking_id"]);svc=request.env["qimam.booking.mission.control"]
+        action=payload.get("action") or "board"
+        if action=="generate": data=svc.generate(b.id)
+        elif action=="item": data=svc.item_action(b.id,payload["item_id"],payload["item_action"])
+        else:data=svc.board(b.id)
+        return ok(data)
+
+    @http.route("/api/v2/executive/dashboard",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_executive(self,**payload):
+        if not request.env.user.has_group("qimamhd_booking_v2.group_booking_manager"): raise AccessError("Manager access required.")
+        branch=active_branch(payload);start=fields.Date.from_string(payload.get("start_date")) if payload.get("start_date") else fields.Date.context_today(request.env.user)-__import__('datetime').timedelta(days=29);end=fields.Date.from_string(payload.get("end_date")) if payload.get("end_date") else fields.Date.context_today(request.env.user)
+        ev=request.env["qimam.booking"].search([("branch_id","=",branch.id),("booking_date",">=",start),("booking_date","<=",end)]); active=ev.filtered(lambda x:x.state!="cancelled")
+        stays=request.env["qimam.stay.booking"].search([("branch_id","=",branch.id),("checkin_date","<=",end),("checkout_date",">",start)]);sactive=stays.filtered(lambda x:x.state!="cancelled")
+        return ok({"start":start.isoformat(),"end":end.isoformat(),"branch":{"id":branch.id,"name":branch.name},"currency":request.env.company.currency_id.symbol or request.env.company.currency_id.name,
+          "events":{"bookings":len(ev),"active":len(active),"revenue":sum(active.filtered(lambda x:x.state in ("confirmed","preparing","event","completed")).mapped("amount_total")),"holds":len(ev.filtered(lambda x:x.state=="hold")),"overdue":sum(active.mapped("overdue_amount"))},
+          "stays":{"bookings":len(stays),"active":len(sactive),"value":sum(sactive.mapped("amount_total")),"checked_in":len(stays.filtered(lambda x:x.state=="checked_in")),"due":sum(sactive.mapped("amount_due"))}})
+
+    @http.route("/api/v2/home/today",type="json",auth="none",methods=["POST"],csrf=False)
+    @guarded
+    def mobile_today(self,**payload):
+        branch=active_branch(payload);today=fields.Date.context_today(request.env.user)
+        ev=request.env["qimam.booking"].search([("branch_id","=",branch.id),("booking_date","=",today),("state","!=","cancelled")])
+        st=request.env["qimam.stay.booking"].search([("branch_id","=",branch.id),("checkin_date","<=",today),("checkout_date",">",today),("state","in",STAY_BLOCKING)])
+        arrivals=request.env["qimam.stay.booking"].search_count([("branch_id","=",branch.id),("checkin_date","=",today),("state","in",("hold","confirmed","checked_in"))]);departures=request.env["qimam.stay.booking"].search_count([("branch_id","=",branch.id),("checkout_date","=",today),("state","in",("confirmed","checked_in","checked_out"))])
+        return ok({"date":today.isoformat(),"events":len(ev),"occupied_rooms":len(st),"arrivals":arrivals,"departures":departures,"holds":len(ev.filtered(lambda x:x.state=="hold"))+request.env["qimam.stay.booking"].search_count([("branch_id","=",branch.id),("state","=","hold")]),"due":sum(ev.mapped("amount_due"))+sum(st.mapped("amount_due")),"currency":request.env.company.currency_id.symbol or request.env.company.currency_id.name})
 
     # ---------- Temporary compatibility aliases (event domain only) ----------
     @http.route("/api/v2/periods",type="json",auth="none",methods=["POST"],csrf=False)

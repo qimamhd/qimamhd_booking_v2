@@ -26,6 +26,8 @@
      <field name="state" widget="statusbar" statusbar_visible="draft,hold,confirmed,preparing,event,completed"/>
     </header>
     <sheet>
+     <!-- Odoo 13 requires fields referenced by dynamic domains to be present in the view. -->
+     <field name="company_id" invisible="1"/>
      <div class="oe_button_box" name="button_box">
       <button name="action_view_invoices" type="object" class="oe_stat_button" icon="fa-file-text-o">
        <field name="invoice_count" widget="statinfo" string="الفواتير"/>
