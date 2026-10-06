@@ -113,7 +113,7 @@
    <filter string="اليوم" name="today" domain="[('booking_date','=',context_today())]"/>
    <filter string="مؤكد" name="confirmed" domain="[('state','=','confirmed')]"/>
    <filter string="حجز مؤقت" name="hold" domain="[('state','=','hold')]"/>
-   <group expand="0" string="تجميع"><filter string="القاعة" context="{'group_by':'hall_id'}"/><filter string="التاريخ" context="{'group_by':'booking_date'}"/></group>
+   <group expand="0" string="تجميع"><filter name="group_by_hall" string="القاعة" context="{'group_by':'hall_id'}"/><filter name="group_by_booking_date" string="التاريخ" context="{'group_by':'booking_date'}"/></group>
   </search></field>
  </record>
 
