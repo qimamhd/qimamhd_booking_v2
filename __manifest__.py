@@ -2,7 +2,7 @@
 {
     "name": "QimamHD Booking V2",
     "summary": "Branch-based event hall and hotel booking platform",
-    "version": "13.0.30.0.0",
+    "version": "13.0.31.0.0",
     "category": "Services",
     "author": "QimamHD",
     "license": "LGPL-3",
