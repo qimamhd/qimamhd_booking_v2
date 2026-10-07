@@ -41,6 +41,16 @@ if '<field name="branch_id"' not in stay:
 if manifest.index('"views/stay_booking_views.xml"') > manifest.index('"views/booking_branch_views.xml"'):
     errors.append("booking_branch_views.xml must load after stay_booking_views.xml")
 
+
+# Odoo 13 uses an older Sass compiler: CSS min()/max()/clamp() with mixed units
+# may be parsed as Sass arithmetic and fail web.assets_backend compilation.
+for scss in (root / "static" / "src" / "scss").glob("*.scss"):
+    css = scss.read_text()
+    for bad in ("width:min(", "width: min(", "height:min(", "height: min(",
+                "width:max(", "width: max(", "height:max(", "height: max(",
+                "width:clamp(", "width: clamp(", "height:clamp(", "height: clamp("):
+        if bad in css:
+            errors.append("Odoo13-incompatible Sass sizing function in %s: %s" % (scss.relative_to(root), bad))
 print("DEEP REVIEW GATE:", "PASS" if not errors else "FAIL")
 for err in errors:
     print(" -",err)
