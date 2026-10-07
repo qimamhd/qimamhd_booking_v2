@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
- <record id="booking_form_branch" model="ir.ui.view"><field name="name">qimam.booking.form.branch</field><field name="model">qimam.booking</field><field name="inherit_id" ref="view_qimam_booking_form"/><field name="arch" type="xml"><xpath expr="//field[@name='company_id']" position="before"><field name="branch_id" readonly="1" force_save="1"/></xpath></field></record>
- <record id="stay_form_branch" model="ir.ui.view"><field name="name">qimam.stay.booking.form.branch</field><field name="model">qimam.stay.booking</field><field name="inherit_id" ref="view_stay_booking_form"/><field name="arch" type="xml"><xpath expr="//field[@name='company_id']" position="before"><field name="branch_id" readonly="1" force_save="1"/></xpath></field></record>
+ <record id="booking_form_branch" model="ir.ui.view"><field name="name">qimam.booking.form.branch</field><field name="model">qimam.booking</field><field name="inherit_id" ref="view_qimam_booking_form" /><field name="arch" type="xml"><xpath expr="//field[@name='company_id']" position="before"><field name="branch_id" readonly="1" force_save="1" /></xpath></field></record>
+ <record id="stay_form_branch" model="ir.ui.view"><field name="name">qimam.stay.booking.form.branch</field><field name="model">qimam.stay.booking</field><field name="inherit_id" ref="view_stay_booking_form" /><field name="arch" type="xml"><xpath expr="//field[@name='company_id']" position="before"><field name="branch_id" readonly="1" force_save="1" /></xpath></field></record>
 </odoo>

@@ -43,6 +43,7 @@
      <!-- Keep the first screen intentionally light: customer + date + hall + periods. -->
      <group>
       <group string="الحجز">
+        <field name="branch_id" options="{'no_create':True,'no_open':True}"/>
        <field name="partner_id" options="{'no_quick_create': True}"/>
        <field name="booking_date"/>
        <field name="hall_id"/>

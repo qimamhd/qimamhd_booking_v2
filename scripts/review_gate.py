@@ -34,6 +34,10 @@ if '<field name="company_id" invisible="1"/>' not in booking:
     errors.append("booking form must contain invisible company_id for dynamic domains")
 if '<field name="company_id" invisible="1"/>' not in stay:
     errors.append("stay form must contain company_id for dynamic/domain consistency")
+if '<field name="branch_id"' not in booking:
+    errors.append("booking form must visibly contain branch_id")
+if '<field name="branch_id"' not in stay:
+    errors.append("stay form must visibly contain branch_id because resource domain references it")
 if manifest.index('"views/stay_booking_views.xml"') > manifest.index('"views/booking_branch_views.xml"'):
     errors.append("booking_branch_views.xml must load after stay_booking_views.xml")
 
